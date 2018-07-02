@@ -3873,16 +3873,31 @@ libraw_processed_image_t *LibRaw::dcraw_make_mem_image(int *errcode)
 #undef SWAP
 #endif
 
+int LibRaw::dcraw_ppm_tiff_writer_stdout()
+{
+  return this->dcraw_ppm_tiff_writer_fh(stdout);
+}
 int LibRaw::dcraw_ppm_tiff_writer(const char *filename)
+{
+  if (!filename)
+    return ENOENT;
+
+  FILE *f = fopen(filename, "wb");;
+  if (!f)
+    return errno;
+
+  int retval = this->dcraw_ppm_tiff_writer_fh(f);
+
+  fclose(f);
+
+  return retval;
+}
+int LibRaw::dcraw_ppm_tiff_writer_fh(FILE* f)
 {
   CHECK_ORDER_LOW(LIBRAW_PROGRESS_LOAD_RAW);
 
   if (!imgdata.image)
     return LIBRAW_OUT_OF_ORDER_CALL;
-
-  if (!filename)
-    return ENOENT;
-  FILE *f = fopen(filename, "wb");
 
   if (!f)
     return errno;
@@ -3899,12 +3914,10 @@ int LibRaw::dcraw_ppm_tiff_writer(const char *filename)
     write_ppm_tiff();
     SET_PROC_FLAG(LIBRAW_PROGRESS_FLIP);
     libraw_internal_data.internal_data.output = NULL;
-    fclose(f);
     return 0;
   }
   catch (LibRaw_exceptions err)
   {
-    fclose(f);
     EXCEPTION_HANDLER(err);
   }
 }

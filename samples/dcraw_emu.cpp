@@ -94,6 +94,7 @@ void usage(const char *prog)
          "-G        Use green_matching() filter\n"
          "-B <x y w h> use cropbox\n"
          "-F        Use FILE I/O instead of streambuf API\n"
+         "-output <file> Specify output file; use \"-\" for STDOUT\n"
          "-timing   Detailed timing report\n"
          "-fbdd N   0 - disable FBDD noise reduction (default), 1 - light FBDD, 2 - full\n"
          "-dcbi N   Number of extra DCD iterations (default - 0)\n"
@@ -184,6 +185,7 @@ int main(int argc, char *argv[])
 #endif
 
 #define OUT RawProcessor.imgdata.params
+  char* customFilename = 0;
 
   argv[argc] = (char *)"";
   for (arg = 1; (((opm = argv[arg][0]) - 2) | 2) == '+';)
@@ -197,7 +199,7 @@ int main(int argc, char *argv[])
           fprintf(stderr, "Non-numeric argument to \"-%c\"\n", opt);
           return 1;
         }
-    if (!strchr("ftdeam", opt) && argv[arg - 1][2])
+    if (!strchr("ftdeamo", opt) && argv[arg - 1][2])
       fprintf(stderr, "Unknown option \"%s\".\n", argv[arg - 1]);
     switch (opt)
     {
@@ -280,8 +282,17 @@ int main(int argc, char *argv[])
       OUT.shot_select = abs(atoi(argv[arg++]));
       break;
     case 'o':
-      if (isdigit(argv[arg][0]) && !isdigit(argv[arg][1]))
-        OUT.output_color = atoi(argv[arg++]);
+      if (!strcmp(optstr, "-output"))
+        customFilename = argv[arg++];
+      else
+      {
+        if (!argv[arg - 1][2])
+          if (isdigit(argv[arg][0]) && !isdigit(argv[arg][1]))
+            OUT.output_color = atoi(argv[arg++]);
+        else
+          fprintf(stderr, "Unknown option \"%s\".\n", argv[arg - 1]);
+      }
+      break;
 #ifndef NO_LCMS
       else
         OUT.output_profile = argv[arg++];
@@ -529,15 +540,25 @@ int main(int argc, char *argv[])
     if (use_timing)
       timerprint("LibRaw::dcraw_process()", argv[arg]);
 
-    snprintf(outfn, sizeof(outfn), "%s.%s", argv[arg], OUT.output_tiff ? "tiff" : (P1.colors > 1 ? "ppm" : "pgm"));
-
-    if (verbosity)
-    {
-      printf("Writing file %s\n", outfn);
+    if (customFilename != 0) {
+      strncpy(outfn, customFilename, sizeof(outfn));
+    } else {
+      snprintf(outfn, sizeof(outfn), "%s.%s", argv[arg], OUT.output_tiff ? "tiff" : (P1.colors > 1 ? "ppm" : "pgm"));
     }
 
-    if (LIBRAW_SUCCESS != (ret = RawProcessor.dcraw_ppm_tiff_writer(outfn)))
-      fprintf(stderr, "Cannot write %s: %s\n", outfn, libraw_strerror(ret));
+
+    if (!strcmp("-", outfn))
+    {
+      if (LIBRAW_SUCCESS != (ret = RawProcessor.dcraw_ppm_tiff_writer_stdout()))
+        fprintf(stderr, "Cannot write to STDOUT: %s\n", libraw_strerror(ret));
+    }
+    else
+    {
+      if (verbosity)
+        printf("Writing file %s\n", outfn);
+      if (LIBRAW_SUCCESS != (ret = RawProcessor.dcraw_ppm_tiff_writer(outfn)))
+        fprintf(stderr, "Cannot write %s: %s\n", outfn, libraw_strerror(ret));
+    }
 
 #ifndef WIN32
     if (use_mmap && iobuffer)

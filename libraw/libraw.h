@@ -178,6 +178,7 @@ public:
   static const char *strerror(int p);
   /* dcraw emulation */
   int dcraw_ppm_tiff_writer(const char *filename);
+  int dcraw_ppm_tiff_writer_stdout();
   int dcraw_thumb_writer(const char *fname);
   int dcraw_process(void);
   /* information calls */
@@ -235,6 +236,8 @@ public:
   void set_dng_host(void *);
 
 protected:
+  int dcraw_ppm_tiff_writer_fh(FILE* f);
+
   int is_curve_linear();
   void checkCancel();
   void cam_xyz_coeff(float _rgb_cam[3][4], double cam_xyz[4][3]);
