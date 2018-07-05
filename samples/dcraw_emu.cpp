@@ -287,20 +287,23 @@ int main(int argc, char *argv[])
       else
       {
         if (!argv[arg - 1][2])
+        {
           if (isdigit(argv[arg][0]) && !isdigit(argv[arg][1]))
             OUT.output_color = atoi(argv[arg++]);
+#ifndef NO_LCMS
+          else
+            OUT.output_profile = argv[arg++];
+#endif
+        }
         else
           fprintf(stderr, "Unknown option \"%s\".\n", argv[arg - 1]);
       }
       break;
 #ifndef NO_LCMS
-      else
-        OUT.output_profile = argv[arg++];
-      break;
     case 'p':
       OUT.camera_profile = argv[arg++];
-#endif
       break;
+#endif
     case 'h':
       OUT.half_size = 1;
       break;
