@@ -30,6 +30,7 @@
      -Z ext will output into inputfilename.ext
      -Z .ext will output into inputfilename.inputext.ext
 
+ * LibRaw 201812-snapshot
 
 2018-11-22  Alex Tutubalin <lexa@lexa.ru>
  * Finally: got Sinar 4shot sample, works fine now
