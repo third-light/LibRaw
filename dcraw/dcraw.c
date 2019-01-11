@@ -15232,6 +15232,10 @@ int CLASS parse_tiff_ifd(int base)
       break;
     case 50459: /* Hasselblad tag */
 #ifdef LIBRAW_LIBRARY_BUILD
+    if(!libraw_internal_data.unpacker_data.hasselblad_parser_flag)
+#endif
+    {
+#ifdef LIBRAW_LIBRARY_BUILD
       libraw_internal_data.unpacker_data.hasselblad_parser_flag = 1;
 #endif
       i = order;
@@ -15244,6 +15248,7 @@ int CLASS parse_tiff_ifd(int base)
       tiff_nifds = c;
       order = i;
       break;
+    }
     case 50706: /* DNGVersion */
       FORC4 dng_version = (dng_version << 8) + fgetc(ifp);
       if (!make[0])
