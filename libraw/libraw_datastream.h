@@ -1,6 +1,6 @@
 /* -*- C -*-
  * File: libraw_datastream.h
- * Copyright 2008-2018 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2019 LibRaw LLC (info@libraw.org)
  * Created: Sun Jan 18 13:07:35 2009
  *
  * LibRaw Data stream interface
@@ -27,6 +27,18 @@ it under the terms of the one of two licenses as you choose:
 #ifndef __cplusplus
 
 #else /* __cplusplus */
+#if defined WIN32 || defined(__MINGW32__)
+#include <winsock2.h>
+#endif
+/* No unique_ptr on Apple ?? */
+#if __cplusplus >= 201103L || (defined(_CPPLIB_VER) && _CPPLIB_VER >= 520)
+/* OK - use unique_ptr */
+#else
+/* Force to use auto_ptr */
+#ifndef LIBRAW_USE_AUTOPTR
+#define LIBRAW_USE_AUTOPTR
+#endif
+#endif
 
 #include "libraw_const.h"
 #include "libraw_types.h"
@@ -34,7 +46,6 @@ it under the terms of the one of two licenses as you choose:
 #include <memory>
 
 #if defined WIN32 || defined(__MINGW32__)
-#include <winsock2.h>
 
 /* MSVS 2008 and above... */
 #if _MSC_VER >= 1500
@@ -110,14 +121,23 @@ protected:
 };
 
 #ifdef WIN32
+#ifdef LIBRAW_USE_AUTOPTR
 template class DllDef std::auto_ptr<std::streambuf>;
+#else
+template class DllDef std::unique_ptr<std::streambuf>;
+#endif
 #endif
 
 class DllDef LibRaw_file_datastream : public LibRaw_abstract_datastream
 {
 protected:
+#ifdef LIBRAW_USE_AUTOPTR
   std::auto_ptr<std::streambuf> f;       /* will close() automatically through dtor */
   std::auto_ptr<std::streambuf> saved_f; /* when *f is a subfile, *saved_f is the master file */
+#else
+  std::unique_ptr<std::streambuf> f;
+  std::unique_ptr<std::streambuf> saved_f;
+#endif
   std::string filename;
   INT64 _fsize;
 #ifdef WIN32

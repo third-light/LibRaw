@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_internal.h
- * Copyright 2008-2018 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2019 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8 , 2008
  *
  * LibRaw internal data structures (not visible outside)
@@ -60,8 +60,8 @@ public:
   struct
   {
     uchar buf[0x4002];
-    int vbits, padding;
-  } pana_bits;
+    int vpos, padding;
+  } pana_data;
   uchar jpeg_buffer[4096];
   struct
   {
@@ -73,7 +73,7 @@ public:
     getbits.vbits = getbits.reset = 0;
     ph1_bits.bitbuf = 0;
     ph1_bits.vbits = 0;
-    pana_bits.vbits = 0;
+    pana_data.vpos = 0;
     ahd_data.cbrt[0] = -2.0f;
   }
 };
@@ -97,7 +97,7 @@ typedef struct
   char *meta_data;
   INT64 profile_offset;
   INT64 toffset;
-  unsigned pana_black[3];
+  unsigned pana_black[4];
 
 } internal_data_t;
 
@@ -131,6 +131,7 @@ typedef struct
   unsigned tiff_samples;
   unsigned tiff_bps;
   unsigned tiff_compress;
+  unsigned tiff_sampleformat;
   unsigned zero_after_ff;
   unsigned tile_width, tile_length, load_flags;
   unsigned data_error;
@@ -138,7 +139,7 @@ typedef struct
   long long posRAFData;
   unsigned lenRAFData;
   int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type;
- int pana_encoding, pana_bpp;
+  int pana_encoding, pana_bpp;
 } unpacker_data_t;
 
 typedef struct
