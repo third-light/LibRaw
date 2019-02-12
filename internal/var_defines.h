@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: var_defines.h
- * Copyright 2008-2018 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2019 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8, 2008
  *
  * LibRaw redefinitions of dcraw internal variables
@@ -76,7 +76,6 @@ it under the terms of the one of two licenses as you choose:
 #define flash_used      (imgdata.color.flash_used)
 #define canon_ev        (imgdata.color.canon_ev)
 #define model2          (imgdata.color.model2)
-#define baseline_exposure  (imgdata.color.baseline_exposure)
 
 //imgdata.thumbnail
 
@@ -95,6 +94,8 @@ it under the terms of the one of two licenses as you choose:
 #define gpsdata         (imgdata.other.gpsdata)
 #define desc            (imgdata.other.desc)
 #define artist          (imgdata.other.artist)
+#define is_NikonTransfer (imgdata.other.is_NikonTransfer)
+#define is_4K_RAFdata    (imgdata.other.is_4K_RAFdata)
 
 //imgdata.output
 #define greybox         (imgdata.params.greybox)
@@ -122,22 +123,10 @@ it under the terms of the one of two licenses as you choose:
 #define use_fuji_rotate (imgdata.params.use_fuji_rotate)
 #define filtering_mode (imgdata.params.filtering_mode)
 
-// Demosaic packs
-//AFD
-//#define afd_noise_att				(imgdata.params.afd_noise_att)
-//#define afd_noise_thres				(imgdata.params.afd_noise_thres)
-//#define afd_luminance_passes		(imgdata.params.afd_luminance_passes)
-//#define afd_chrominance_method		(imgdata.params.afd_chrominance_method)
-//#define afd_luminance_only			(imgdata.params.afd_luminance_only)
 // DCB
 #define dcb_iterations   (imgdata.params.iterations)
 #define dcb_enhance_fl   (imgdata.params.dcb_enhance)
 #define fbdd_noiserd     (imgdata.params.fbdd_noiserd)
-// VCD
-#define eeci_refine    (imgdata.params.eeci_refine)
-#define es_med_passes  (imgdata.params.es_med_passes)
-
-
 
 //rgb_constants
 #define xyz_rgb         (rgb_constants.xyz_rgb)
@@ -190,10 +179,13 @@ it under the terms of the one of two licenses as you choose:
 #define tiff_samples    (libraw_internal_data.unpacker_data.tiff_samples)
 #define tiff_bps        (libraw_internal_data.unpacker_data.tiff_bps)
 #define tiff_compress   (libraw_internal_data.unpacker_data.tiff_compress)
+#define tiff_sampleformat (libraw_internal_data.unpacker_data.tiff_sampleformat)
 #define zero_after_ff   (libraw_internal_data.unpacker_data.zero_after_ff)
 #define tile_width      (libraw_internal_data.unpacker_data.tile_width)
 #define tile_length     (libraw_internal_data.unpacker_data.tile_length)
 #define load_flags      (libraw_internal_data.unpacker_data.load_flags)
+#define pana_encoding   (libraw_internal_data.unpacker_data.pana_encoding)
+#define pana_bpp        (libraw_internal_data.unpacker_data.pana_bpp)
 
 #ifdef LIBRAW_IO_REDEFINED
 #define fread(ptr,size,n,stream) stream->read(ptr,size,n)
