@@ -17473,6 +17473,8 @@ void CLASS adobe_coeff(const char *t_make, const char *t_model
       { 2905,732,-237,-8134,16626,1476,-3038,4253,7517 } },
     { "Phase One P2", 0, 0,
       { 2905,732,-237,-8134,16626,1476,-3038,4253,7517 } },
+    { "Phase One IQ3 100MP Trichr", 0, 0,
+      {17688,-5448,-1949,-8113,16718,1339,723,-1324,12880} }, /* inverse of forward calibration matrix from dng convert of 100MP Trichr IIQ file */
     { "Phase One IQ3 100MP", 0, 0, /* added */
 //    {2423,0,0,0,9901,0,0,0,7989}},
       { 10999,354,-742,-4590,13342,937,-1060,2166,8120} }, /* emb */
